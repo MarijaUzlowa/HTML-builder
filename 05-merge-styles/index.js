@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs/promises');
 const path = require('path');
 
 const stylesPath = path.join(__dirname, 'styles');
@@ -6,31 +6,51 @@ const distPath = path.join(__dirname, 'project-dist/bundle.css');
 
 const isCSSFile = (file) => path.extname(file) === '.css';
 
-const readStyles = () => {
+const readStyles = async () => {
     const styles = [];
 
-    const files = fs.readdirSync(stylesPath);
+    try {
+        const files = await fs.readdir(stylesPath);
 
-    files.forEach((file) => {
-        const filePath = path.join(stylesPath, file);
+        for (const file of files) {
+            const filePath = path.join(stylesPath, file);
 
-        if (fs.statSync(filePath).isFile() && isCSSFile(file)) {
-            const content = fs.readFileSync(filePath, 'utf-8');
-            styles.push(content);
+            try {
+                const stat = await fs.stat(filePath);
+
+                if (stat.isFile() && isCSSFile(file)) {
+                    const content = await fs.readFile(filePath, 'utf-8');
+                    styles.push(content);
+                }
+            } catch (error) {
+                console.error('Error reading file:', filePath, error);
+            }
         }
-    });
+    } catch (error) {
+        console.error('Error reading directory:', stylesPath, error);
+    }
 
     return styles.join('\n');
 };
 
-const writeBundle = (content) => {
-    fs.writeFileSync(distPath, content);
-    console.log('Bundle created successfully at', distPath);
+const writeBundle = async (content) => {
+    try {
+        await fs.writeFile(distPath, content);
+        console.log('Bundle created successfully at', distPath);
+    } catch (error) {
+        console.error('Error writing bundle file:', distPath, error);
+    }
 };
 
-const main = () => {
-    const stylesContent = readStyles();
-    writeBundle(stylesContent);
+const main = async () => {
+    try {
+        const stylesContent = await readStyles();
+        await writeBundle(stylesContent);
+    } catch (error) {
+        console.error('Error in main:', error);
+    }
 };
 
-main();
+(async () => {
+    await main();
+})();
