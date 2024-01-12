@@ -23,11 +23,11 @@ const readStyles = async () => {
                     styles.push(content);
                 }
             } catch (error) {
-                console.error('Error reading file:', filePath, error);
+                console.error('Ошибка чтения файла:', filePath, error);
             }
         }
     } catch (error) {
-        console.error('Error reading directory:', stylesPath, error);
+        console.error('Ошибка чтения каталога:', stylesPath, error);
     }
 
     return styles.join('\n');
@@ -36,9 +36,9 @@ const readStyles = async () => {
 const writeBundle = async (content) => {
     try {
         await fs.writeFile(distPath, content);
-        console.log('Bundle created successfully at', distPath);
+        console.log('Пакет успешно создан в', distPath);
     } catch (error) {
-        console.error('Error writing bundle file:', distPath, error);
+        console.error('Ошибка записи файла пакета:', distPath, error);
     }
 };
 
@@ -47,7 +47,7 @@ const main = async () => {
         const stylesContent = await readStyles();
         await writeBundle(stylesContent);
     } catch (error) {
-        console.error('Error in main:', error);
+        console.error('Ошибка в main:', error);
     }
 };
 
