@@ -2,27 +2,33 @@ const fs = require('fs').promises;
 const path = require('path');
 
 async function copyDir() {
-    const sourceDir = path.join(__dirname, 'files');
-    const destinationDir = path.join(__dirname, 'files-copy');
-
     try {
+        const sourcePath = path.join(__dirname, 'files');
+        const destinationPath = path.join(__dirname, 'files-copy');
 
-        await fs.mkdir(destinationDir, { recursive: true });
+        await fs.mkdir(destinationPath, { recursive: true });
 
+        const sourceFiles = await fs.readdir(sourcePath);
+        const destinationFiles = await fs.readdir(destinationPath);
 
-        const files = await fs.readdir(sourceDir);
-
-
-        for (const file of files) {
-            const sourcePath = path.join(sourceDir, file);
-            const destinationPath = path.join(destinationDir, file);
-
-            await fs.copyFile(sourcePath, destinationPath);
+        for (const file of destinationFiles) {
+            if (!sourceFiles.includes(file)) {
+                const filePath = path.join(destinationPath, file);
+                await fs.unlink(filePath);
+            }
         }
 
-        console.log('Копирование завершено успешно');
-    }  catch (err) {
-        console.error(`Ошибка при копировании: ${err.message}`);
+        for (const file of sourceFiles) {
+            const sourceFile = path.join(sourcePath, file);
+            const destinationFile = path.join(destinationPath, file);
+
+            // Копируем или обновляем файл
+            await fs.copyFile(sourceFile, destinationFile);
+        }
+
+        console.log('Директория успешно скопирована.');
+    } catch (error) {
+        console.error('Ошибка при копировании директории:', error.message);
     }
 }
 

@@ -4,7 +4,6 @@ const path = require('path');
 const filePath = path.join(__dirname, 'printed_text.txt');
 
 const outputStream = fs.createWriteStream(filePath, { flags: 'a' });
-//fs.writeFileSync(filePath, '');
 
 console.log('Введите текст (для выхода введите "exit"):');
 
@@ -18,11 +17,11 @@ const r1 = readline.createInterface({
 r1.prompt();
 
 r1.on('line', (input) => {
-    if (input.toLowerCase() === 'exit') {
+    const trimmedInput = input.trim();
+    if (trimmedInput.toLowerCase() === 'exit') {
         r1.close();
     } else {
-        outputStream.write(input + '\n');
-        //fs.appendFileSync(filePath, input + '\n', { encoding: 'utf-8' });
+        outputStream.write(trimmedInput + '\n');
         r1.prompt();
     }
 
