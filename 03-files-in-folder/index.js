@@ -16,9 +16,7 @@ async function filesInfo(){
                 const fileExtname = path.extname(file.name).slice(1);
                 const fileSize = fileStat.size;
 
-                console.log(`${fileName} - ${fileExtname} - ${fileSize} kb`);
-            } else {
-                console.error(`Error: ${file.name} is not a file.`);
+                console.log(`${fileName} - ${fileExtname} - ${fileSize}b`);
             }
         }
     } catch (err) {
